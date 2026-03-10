@@ -21,6 +21,12 @@ class TestLeafNode(unittest.TestCase):
         expected = '<a href="https://example.com" target="_blank">link text</a>'
         self.assertEqual(actual, expected)
 
+    def test_leaf_to_html_no_tag(self):
+        node = LeafNode(None, "Hello, world!")
+        actual = node.to_html()
+        expected = "Hello, world!"
+        self.assertEqual(actual, expected)
+
     def test_repr(self):
         node = LeafNode('a', 'link text', {'href': 'https://example.com', 'target': '_blank'})
         actual = repr(node)
