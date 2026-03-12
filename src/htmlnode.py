@@ -40,11 +40,14 @@ class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
 
+    def __repr__(self):
+        return f"ParentNode({self.tag}, {self.children}, {self.props})"
+
     def to_html(self):
         if self.tag is None:
             raise ValueError("value error: required property <tag> not present")
-        if self.children is None:
-            raise ValueError("value error: required property <children> not present")
+        if self.children is None or self.children == []:
+            raise ValueError("value error: ParentNode object must have at least one child. No children provided.")
         child_html_list = []
         for child in self.children:
             child_html_list.append(child.to_html())
