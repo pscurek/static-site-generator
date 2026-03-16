@@ -92,6 +92,52 @@ class TestExtractMarkdownImagesAndLinks(unittest.TestCase):
         actual = matches
         expected = [("image", "https://i.imgur.com/zjjcJKZ.png")]
         self.assertListEqual(actual, expected)
+    
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link](https://example.com)"
+        )
+        actual = matches
+        expected = [("link", "https://example.com")]
+        self.assertListEqual(actual, expected)
+
+    def test_extract_markdown_multiple_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image1](https://image1.png) here and an ![image2](https://image2.png) here"
+        )
+        actual = matches
+        expected = [
+                ("image1", "https://image1.png"),
+                ("image2", "https://image2.png"),
+        ]
+        self.assertListEqual(actual, expected)
+
+    def test_extract_markdown_multiple_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link1](https://example1.com) here and a [link2](https://example2.com) here"
+        )
+        actual = matches
+        expected = [
+                ("link1", "https://example1.com"),
+                ("link2", "https://example2.com"),
+        ]
+        self.assertListEqual(actual, expected)
+
+    def test_links_and_images_extract_links(self):
+        matches = extract_markdown_links(
+            "This is text with an ![image](https://image.png) here and a [link](https://example.com) here"
+        )
+        actual = matches
+        expected = [("link", "https://example.com")]
+        self.assertListEqual(actual, expected)
+
+    def test_links_and_images_extract_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://image.png) here and a [link](https://example.com) here"
+        )
+        actual = matches
+        expected = [("image", "https://image.png")]
+        self.assertListEqual(actual, expected)
 
 if __name__ == "__main__":
     unittest.main()
