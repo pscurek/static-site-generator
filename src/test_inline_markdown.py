@@ -1,5 +1,88 @@
 import unittest
-from inline_markdown import extract_markdown_images, extract_markdown_links
+
+from textnode import (
+        TextNode,
+        TextType,
+)
+
+from inline_markdown import (
+        split_nodes_delimiter,
+        extract_markdown_images,
+        extract_markdown_links,
+)
+
+class TestSplitNodesDelimiter(unittest.TestCase):
+    def test_delim_code(self):
+        nodes = [TextNode("this has `code block` text", TextType.TEXT)]
+        actual = split_nodes_delimiter(nodes, "`", TextType.CODE)
+        expected = [
+                TextNode("this has ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" text", TextType.TEXT)
+            ]
+        self.assertEqual(actual, expected)
+
+    def test_no_matching_delimiter(self):
+        nodes = [TextNode("this has `code block text", TextType.TEXT)]
+        with self.assertRaises(ValueError):
+            split_nodes_delimiter(nodes, "`", TextType.CODE)
+    
+    def test_no_delimiter(self):
+        nodes = [TextNode("this has code block text", TextType.TEXT)]
+        actual = split_nodes_delimiter(nodes, "`", TextType.CODE)
+        expected = [TextNode("this has code block text", TextType.TEXT)]         
+        self.assertEqual(actual, expected)
+
+    def test_text_type_is_not_text(self):
+        nodes = [TextNode("`this has code block text`", TextType.CODE)]
+        actual = split_nodes_delimiter(nodes, "`", TextType.CODE)
+        self.assertEqual(actual, nodes)
+
+    def test_delim_italic(self):
+        nodes = [TextNode("this has _italic_ text", TextType.TEXT)]
+        actual = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+        expected = [
+                TextNode("this has ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" text", TextType.TEXT)
+            ]
+        self.assertEqual(actual, expected)
+
+    def test_delim_bold(self):
+        nodes = [TextNode("this has **bold** text", TextType.TEXT)]
+        actual = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+        expected = [
+                TextNode("this has ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" text", TextType.TEXT)
+            ]
+        self.assertEqual(actual, expected)
+
+    def test_delim_bold_multiple(self):
+        nodes = [TextNode("this has **bold** text **here** and there", TextType.TEXT)]
+        actual = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+        expected = [
+                TextNode("this has ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" text ", TextType.TEXT),
+                TextNode("here", TextType.BOLD),
+                TextNode(" and there", TextType.TEXT),
+            ]
+        self.assertEqual(actual, expected)
+
+    def test_delim_bold_and_italic(self):
+        nodes = [TextNode("this has **bold** text and _italic_ text", TextType.TEXT)]
+        new_nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+        new_nodes = split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
+        actual = new_nodes
+        expected = [
+                TextNode("this has ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" text and ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" text", TextType.TEXT),
+            ]
+        self.assertEqual(actual, expected)
 
 class TestExtractMarkdownImagesAndLinks(unittest.TestCase):
     def test_extract_markdown_images(self):
