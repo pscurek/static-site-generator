@@ -248,7 +248,7 @@ class TestSplitNodesOnImagesAndLinks(unittest.TestCase):
 
     def test_split_links_then_images(self):
         node = TextNode(
-            "This is text with a [link](https://example.com) and an [image](https://image.png)",
+            "This is text with a [link](https://example.com) and an ![image](https://image.png)",
             TextType.TEXT,
         )
         new_nodes = split_nodes_link([node])
