@@ -160,6 +160,40 @@ class TestSplitNodesOnImagesAndLinks(unittest.TestCase):
             new_nodes,
         )
 
+    def test_split_images_beginning_and_end(self):
+        node = TextNode(
+            "![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_images_sequential_images(self):
+        node = TextNode(
+            "This is text with ![image](https://i.imgur.com/zjjcJKZ.png)![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+
     def test_split_links(self):
         node = TextNode(
             "This is text with a [link](https://example.com) and another [second link](https://second.example.com)",
@@ -173,6 +207,59 @@ class TestSplitNodesOnImagesAndLinks(unittest.TestCase):
                 TextNode(" and another ", TextType.TEXT),
                 TextNode(
                     "second link", TextType.LINK, "https://second.example.com"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_links_at_beginning_and_end(self):
+        node = TextNode(
+            "[link](https://example.com) and another [second link](https://second.example.com)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("link", TextType.LINK, "https://example.com"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second link", TextType.LINK, "https://second.example.com"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_links_sequential_links(self):
+        node = TextNode(
+            "This is text with [link](https://example.com)[second link](https://second.example.com)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://example.com"),
+                TextNode(
+                    "second link", TextType.LINK, "https://second.example.com"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_links_then_images(self):
+        node = TextNode(
+            "This is text with a [link](https://example.com) and an [image](https://image.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        new_nodes = split_nodes_image(new_nodes)
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://example.com"),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode(
+                    "image", TextType.IMAGE, "https://image.png"
                 ),
             ],
             new_nodes,
