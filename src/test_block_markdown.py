@@ -89,5 +89,60 @@ class TestBlockToBlockType(unittest.TestCase):
         expected = BlockType.CODE
         self.assertEqual(actual, expected)
 
+    def test_block_to_block_type_quote_block(self):
+        block = inspect.cleandoc(
+                """
+                >quote line 1
+                > quote line 2
+                > quote line 3
+                >quote line 4
+                """
+        )
+        actual = block_to_block_type(block)
+        expected = BlockType.QUOTE
+        self.assertEqual(actual, expected)
+
+    def test_block_to_block_type_unordered_list(self):
+        block = inspect.cleandoc(
+                """
+                - item 1
+                - item 2
+                - item 3
+                - item 4
+                - item 5
+                """
+        )
+        actual = block_to_block_type(block)
+        expected = BlockType.UNORDERED_LIST
+        self.assertEqual(actual, expected)
+
+    def test_block_to_block_type_ordered_list(self):
+        block = inspect.cleandoc(
+                """
+                1. item 1
+                2. item 2
+                3. item 3
+                4. item 4
+                5. item 5
+                """
+        )
+        actual = block_to_block_type(block)
+        expected = BlockType.ORDERED_LIST
+        self.assertEqual(actual, expected)
+        
+    def test_block_to_block_type_paragraph(self):
+        block = inspect.cleandoc(
+                """
+                # item
+                1. item
+                > item
+                - item
+                Regular Paragraph
+                """
+        )
+        actual = block_to_block_type(block)
+        expected = BlockType.PARAGRAPH
+        self.assertEqual(actual, expected)
+    
 if __name__ == "__main__":
     unittest.main()
