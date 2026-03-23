@@ -1,5 +1,8 @@
 import re
 from enum import Enum
+from textnode import TextType, TextNode, text_node_to_html_node
+from htmlnode import ParentNode, LeafNode 
+from inline_markdown import text_to_textnodes
 
 class BlockType(Enum):
    PARAGRAPH = "paragraph"
@@ -51,3 +54,70 @@ def block_to_block_type(block):
             return BlockType.ORDERED_LIST
         else:
             return BlockType.PARAGRAPH
+
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    html_nodes = []
+    for node in text_nodes:
+        html_nodes.append(text_node_to_html_node(node))
+    return html_nodes
+
+def block_to_html_node(block):
+    block_type = block_to_block_type(block)
+    match block_type:
+        case BlockType.PARAGRAPH:
+            text = " ".join(block.split("\n"))
+            return ParentNode("p", text_to_children(text)) 
+        case BlockType.HEADING:
+            for i in range(1, 7):
+                if block[i] == " ":
+                    text = block[i + 1:]
+                    return ParentNode(f'h{i}', text_to_children(text))
+        case BlockType.CODE:
+            text = block[4:-4]
+            text_node = TextNode(text, TextType.TEXT)
+            code_node = ParentNode("code", [text_node_to_html_node(text_node)])
+            return ParentNode("pre", [code_node])
+        case BlockType.QUOTE:
+            lines = block.split("\n")
+            children = []
+            current_text_list = []
+            for line in lines:
+                if line.startswith("> "):
+                    line_text = line.strip()[2:]
+                elif line.startswith(">"):
+                    line_text = line.strip()[1:]
+                if line_text == "":
+                    current_text = " ".join(current_text_list).strip()
+                    if current_text:
+                        children.append(ParentNode("p", text_to_children(current_text)))
+                    current_text_list.clear()
+                    continue
+                current_text_list.append(line_text)
+            current_text = " ".join(current_text_list).strip()
+            if current_text:
+                children.append(ParentNode("p", text_to_children(current_text)))
+            if children:
+                return ParentNode("blockquote", children)
+            return LeafNode("blockquote", "")
+        case BlockType.UNORDERED_LIST:
+            lines = block.split("\n")
+            children = []
+            for line in lines:
+                line_text = line[2:]
+                children.append(ParentNode("li", text_to_children(line_text)))
+            return ParentNode("ul", children)
+        case BlockType.ORDERED_LIST:
+            lines = block.split("\n")
+            children = []
+            for line in lines:
+                line_text = line[3:]
+                children.append(ParentNode("li", text_to_children(line_text)))
+            return ParentNode("ol", children)
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown.strip())
+    block_nodes = []
+    for block in blocks:
+        block_nodes.append(block_to_html_node(block))
+    return ParentNode("div", block_nodes)
