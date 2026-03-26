@@ -18,7 +18,9 @@ def generate_page(from_path, template_path, dest_path):
     html_content = node.to_html()
     html_title = extract_title(md)
     full_html = template.replace("{{ Title }}", html_title).replace("{{ Content }}", html_content)
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    dest_dir_path = os.path.dirname(dest_path)
+    if dest_dir_path != "":
+        os.makedirs(dest_dir_path, exist_ok=True)
     with open(dest_path, "w") as f:
         f.write(full_html)
 

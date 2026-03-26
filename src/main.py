@@ -1,5 +1,5 @@
 from textnode import TextNode, TextType
-from system_functions import copy_static_to_public
+from copystatic import copy_static_to_public
 from page_generator import generate_page
 
 def main():
