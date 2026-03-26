@@ -49,7 +49,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         node = TextNode("alt text", TextType.IMAGE, "https://example.com")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "img")
-        self.assertEqual(html_node.value, None)
+        self.assertEqual(html_node.value, "")
         self.assertEqual(html_node.props, {"src": "https://example.com", "alt": "alt text"})
 
     def test_code(self):
