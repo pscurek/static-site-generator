@@ -6,7 +6,7 @@ def copy_files(source_path, dest_path):
     root = os.getcwd()
     if not root.endswith("static-site-generator"):
         raise Exception("not a valid path")
-    log_path = os.path.join(root, f"logs/{datetime.now().strftime("%Y.%m.%d-%I.%M.%S")}-static_to_public.log")
+    log_path = os.path.join(root, f"logs/{datetime.now().strftime("%Y.%m.%d-%I.%M.%S")}-copy_files.log")
 
     try:
         with open(log_path, "w") as f:
