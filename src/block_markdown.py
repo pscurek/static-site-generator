@@ -79,38 +79,24 @@ def block_to_html_node(block):
             code_node = ParentNode("code", [text_node_to_html_node(text_node)])
             return ParentNode("pre", [code_node])
         case BlockType.QUOTE:
-          ###   THIS CODE CAN HANDLE MULTILINE QUOTE BLOCKS -- WILL BE IMPLEMENTED AFTER CLEANING UP A BIT
-          #  lines = block.split("\n")
-          #  children = []
-          #  current_text_list = []
-          #  for line in lines:
-          #      if line.startswith("> "):
-          #          line_text = line.strip()[2:]
-          #      elif line.startswith(">"):
-          #          line_text = line.strip()[1:]
-          #      if line_text == "":
-          #          current_text = " ".join(current_text_list).strip()
-          #          if current_text:
-          #              children.append(ParentNode("p", text_to_children(current_text)))
-          #          current_text_list.clear()
-          #          continue
-          #      current_text_list.append(line_text)
-          #  current_text = " ".join(current_text_list).strip()
-          #  if current_text:
-          #      children.append(ParentNode("p", text_to_children(current_text)))
-          #  if children:
-          #      return ParentNode("blockquote", children)
-          #  return LeafNode("blockquote", "")
-          ###   REMOVE THE CODE BELOW AFTER THE CODE ABOVE IS CLEANED UP AND READY TO IMPLEMENT
             lines = block.split("\n")
-            new_lines = []
+            children = []
+            current_text_list = []
             for line in lines:
-                if not line.startswith(">"):
-                    raise ValueError("invalid quote block")
-                new_lines.append(line.lstrip(">").strip())
-            content = " ".join(new_lines)
-            children = text_to_children(content)
-            return ParentNode("blockquote", children)
+                line_text = line[1:].strip()
+                if line_text == "":
+                    current_text = " ".join(current_text_list).strip()
+                    if current_text:
+                        children.append(ParentNode("p", text_to_children(current_text)))
+                    current_text_list.clear()
+                    continue
+                current_text_list.append(line_text)
+            current_text = " ".join(current_text_list).strip()
+            if current_text:
+                children.append(ParentNode("p", text_to_children(current_text)))
+            if children:
+                return ParentNode("blockquote", children)
+            return LeafNode("blockquote", "")
         case BlockType.UNORDERED_LIST:
             lines = block.split("\n")
             children = []

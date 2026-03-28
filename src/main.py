@@ -7,7 +7,7 @@ def main():
     # node = TextNode("This is some anchor text", TextType.LINK, "https://www.example.com")
     # print(node)
 
-    if len(sys.argv) >= 1:
+    if len(sys.argv) >= 2:
         basepath = sys.argv[1]
     else:
         basepath = "/"
