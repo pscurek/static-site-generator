@@ -66,8 +66,7 @@ def block_to_html_node(block):
     block_type = block_to_block_type(block)
     match block_type:
         case BlockType.PARAGRAPH:
-            text = " ".join(block.split("\n"))
-            return ParentNode("p", text_to_children(text)) 
+            return paragraph_to_html_node(block) 
         case BlockType.HEADING:
             for i in range(1, 7):
                 if block[i] == " ":
@@ -111,6 +110,10 @@ def block_to_html_node(block):
                 line_text = line[3:]
                 children.append(ParentNode("li", text_to_children(line_text)))
             return ParentNode("ol", children)
+
+def paragraph_to_html_node(block):
+    text = " ".join(block.split("\n"))
+    return ParentNode("p", text_to_children(text))
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown.strip())
