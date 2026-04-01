@@ -74,12 +74,7 @@ def block_to_html_node(block):
         case BlockType.QUOTE:
             return quote_to_html_node(block) 
         case BlockType.UNORDERED_LIST:
-            lines = block.split("\n")
-            children = []
-            for line in lines:
-                line_text = line[2:]
-                children.append(ParentNode("li", text_to_children(line_text)))
-            return ParentNode("ul", children)
+            return unordered_list_to_html_node(block) 
         case BlockType.ORDERED_LIST:
             lines = block.split("\n")
             children = []
@@ -123,6 +118,14 @@ def quote_to_html_node(block):
     if children:
         return ParentNode("blockquote", children)
     return LeafNode("blockquote", "")
+
+def unordered_list_to_html_node(block):
+    lines = block.split("\n")
+    children = []
+    for line in lines:
+        line_text = line[2:]
+        children.append(ParentNode("li", text_to_children(line_text)))
+    return ParentNode("ul", children)
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown.strip())
