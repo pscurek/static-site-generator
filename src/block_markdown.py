@@ -76,12 +76,7 @@ def block_to_html_node(block):
         case BlockType.UNORDERED_LIST:
             return unordered_list_to_html_node(block) 
         case BlockType.ORDERED_LIST:
-            lines = block.split("\n")
-            children = []
-            for line in lines:
-                line_text = line[3:]
-                children.append(ParentNode("li", text_to_children(line_text)))
-            return ParentNode("ol", children)
+            return ordered_list_to_html_node(block) 
 
 def paragraph_to_html_node(block):
     text = " ".join(block.split("\n"))
@@ -126,6 +121,14 @@ def unordered_list_to_html_node(block):
         line_text = line[2:]
         children.append(ParentNode("li", text_to_children(line_text)))
     return ParentNode("ul", children)
+
+def ordered_list_to_html_node(block):
+    lines = block.split("\n")
+    children = []
+    for line in lines:
+        line_text = line[3:]
+        children.append(ParentNode("li", text_to_children(line_text)))
+    return ParentNode("ol", children)
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown.strip())
