@@ -11,6 +11,7 @@ class BlockType(Enum):
    QUOTE = "quote"
    UNORDERED_LIST = "unordered_list"
    ORDERED_LIST = "ordered_list"
+   MATH = "math"
 
 def markdown_to_blocks(markdown):
     raw_blocks = markdown.split("\n\n")
@@ -25,7 +26,7 @@ def markdown_to_blocks(markdown):
 def block_to_block_type(block):
         if re.fullmatch(r"(#{1,6} .*)", block):
             return BlockType.HEADING
-        elif re.fullmatch(r"(```\n[\s\S]*```)", block):
+        if re.fullmatch(r"(```\n[\s\S]*```)", block):
             return BlockType.CODE
 
         lines = block.split("\n")
