@@ -144,6 +144,18 @@ class TestBlockToBlockType(unittest.TestCase):
         actual = block_to_block_type(block)
         expected = BlockType.PARAGRAPH
         self.assertEqual(actual, expected)
+    
+    def test_block_to_block_type_math(self):
+        block = inspect.cleandoc(
+                """
+                $$$
+                a(b + c) = ab + ac
+                $$$
+                """
+        )
+        actual = block_to_block_type(block)
+        expected = BlockType.MATH
+        self.assertEqual(actual, expected)
 
 class TestMarkdownToHtmlNode(unittest.TestCase):
     def test_paragraphs(self):
