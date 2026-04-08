@@ -80,6 +80,10 @@ def block_to_html_node(block):
             return unordered_list_to_html_node(block) 
         case BlockType.ORDERED_LIST:
             return ordered_list_to_html_node(block) 
+        case BlockType.MATH:
+            return math_to_html_node(block)
+        case _:
+            raise TypeError(f'invalid BlockType: {block_type}')
 
 def paragraph_to_html_node(block):
     text = " ".join(block.split("\n"))
@@ -132,6 +136,10 @@ def ordered_list_to_html_node(block):
         line_text = line[3:]
         children.append(ParentNode("li", text_to_children(line_text)))
     return ParentNode("ol", children)
+
+def math_to_html_node(block):
+    # ToDo
+    pass
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown.strip())
