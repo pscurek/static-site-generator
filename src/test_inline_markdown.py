@@ -9,6 +9,7 @@ from inline_markdown import (
         split_nodes_delimiter,
         extract_markdown_images,
         extract_markdown_links,
+        extract_markdown_math,
         split_nodes_image,
         split_nodes_link,
         text_to_textnodes,
@@ -87,7 +88,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             ]
         self.assertEqual(actual, expected)
 
-class TestExtractMarkdownImagesAndLinks(unittest.TestCase):
+class TestExtractMarkdown(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
@@ -103,6 +104,22 @@ class TestExtractMarkdownImagesAndLinks(unittest.TestCase):
         actual = matches
         expected = [("link", "https://example.com")]
         self.assertListEqual(actual, expected)
+
+    def test_extract_markdown_math(self):
+        matches = extract_markdown_math(
+            "This is text with $some math$."
+        )
+        actual = matches
+        expected = ["some math"]
+        self.assertListEqual(actual, expected)
+
+    def test_extract_markdown_multiple_math(self):
+        matches = extract_markdown_math(
+            "This is text with $some math$ here and $there$."
+        )
+        actual = matches
+        expected = ["some math", "there"]
+        self.assertListEqual(actual, expected) 
 
     def test_extract_markdown_multiple_images(self):
         matches = extract_markdown_images(
