@@ -12,6 +12,7 @@ from inline_markdown import (
         extract_markdown_math,
         split_nodes_image,
         split_nodes_link,
+        split_nodes_math,
         text_to_textnodes,
 )
 
@@ -159,7 +160,7 @@ class TestExtractMarkdown(unittest.TestCase):
         expected = [("image", "https://image.png")]
         self.assertListEqual(actual, expected)
 
-class TestSplitNodesOnImagesAndLinks(unittest.TestCase):
+class TestSplitNodesOnImagesLinksAndMath(unittest.TestCase):
     def test_split_images(self):
         node = TextNode(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
@@ -229,6 +230,22 @@ class TestSplitNodesOnImagesAndLinks(unittest.TestCase):
             ],
             new_nodes,
         )
+
+    def test_split_math(self):
+        node = TextNode(
+            "This is text with $math here$ and some $math there$",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_math([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with ", TextType.TEXT),
+                TextNode("math here", TextType.MATH),
+                TextNode(" and some ", TextType.TEXT),
+                TextNode("math there", TextType.MATH),
+            ],
+            new_nodes,
+        ) 
 
     def test_split_links_at_beginning_and_end(self):
         node = TextNode(

@@ -80,6 +80,31 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(sections[1], TextType.TEXT))
     return new_nodes
 
+def split_nodes_math(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+       
+        extracted_math = extract_markdown_math(node.text)
+        if extracted_math == []:
+            new_nodes.append(node)
+            continue
+      
+        split_nodes = []
+        text_to_split = node.text
+        for math_text in extracted_math:
+            sections = text_to_split.split(f'${math_text}$', 1)
+            
+            if sections[0]:
+                new_nodes.append(TextNode(sections[0], TextType.TEXT))
+            new_nodes.append(TextNode(math_text, TextType.MATH))
+            text_to_split = sections[1]
+        if sections[1]:
+            new_nodes.append(TextNode(sections[1], TextType.TEXT))
+    return new_nodes
+
 def text_to_textnodes(text):
     nodes = [TextNode(text, TextType.TEXT)]
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
