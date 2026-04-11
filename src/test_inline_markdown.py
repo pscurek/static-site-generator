@@ -314,8 +314,8 @@ class TestSplitNodesOnImagesLinksAndMath(unittest.TestCase):
         )
 
 class TestTextToTextNodes(unittest.TestCase):
-    def test_text_to_textnodes_bold_italic_code_link_image(self):
-        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+    def test_text_to_textnodes_bold_italic_code_link_image_math(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev) and $a + b$ some math"
         actual = text_to_textnodes(text)
         expected = [
             TextNode("This is ", TextType.TEXT),
@@ -328,6 +328,9 @@ class TestTextToTextNodes(unittest.TestCase):
             TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
             TextNode(" and a ", TextType.TEXT),
             TextNode("link", TextType.LINK, "https://boot.dev"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("a + b", TextType.MATH),
+            TextNode(" some math", TextType.TEXT),
         ]
         self.assertEqual(actual, expected)
 

@@ -8,21 +8,19 @@ class MathType(Enum):
     OPERATOR = "operator"
 
 class MathNode:
-    def __init__(self, text, text_type, url=None):
+    def __init__(self, text, math_type):
         self.text = text
-        self.text_type = text_type
-        self.url = url
+        self.math_type = math_type
 
     def __eq__(self, other):
         is_equal = (
                 self.text == other.text and
-                self.text_type == other.text_type and
-                self.url == other.url
+                self.math_type == other.math_type and
             )
         return is_equal
 
     def __repr__(self):
-        return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
+        return f"MathNode({self.text}, {self.math_type.value})"
 
 def math_node_to_html_node(math_node):
     match math_node.math_type:
