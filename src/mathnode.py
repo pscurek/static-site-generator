@@ -24,19 +24,11 @@ class MathNode:
 
 def math_node_to_html_node(math_node):
     match math_node.math_type:
-        case TextType.TEXT:
-            return LeafNode(None, text_node.text)
-        case TextType.BOLD:
-            return LeafNode("b", text_node.text)
-        case TextType.ITALIC:
-            return LeafNode("i", text_node.text)
-        case TextType.CODE:
-            return LeafNode("code", text_node.text)
-        case TextType.LINK:
-            return LeafNode("a", text_node.text, {"href": text_node.url})
-        case TextType.IMAGE:
-            return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
-        case TextType.MATH:
-            return LeafNode("math", text_node.text, {"display": "inline"})
+        case MathType.IDENTIFIER:
+            return LeafNode("mi", math_node.text)
+        case MathType.NUMBER:
+            return LeafNode("mn", math_node.text)
+        case MathType.OPERATOR:
+            return LeafNode("mo", math_node.text)
         case _:
             raise TypeError("invalid TextType")
