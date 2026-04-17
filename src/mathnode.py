@@ -6,6 +6,7 @@ class MathType(Enum):
     IDENTIFIER = "identifier"
     NUMBER = "number"
     OPERATOR = "operator"
+    FRACTION = "fraction"
 
 class MathNode:
     def __init__(self, text, math_type):
@@ -30,5 +31,7 @@ def math_node_to_html_node(math_node):
             return LeafNode("mn", math_node.text)
         case MathType.OPERATOR:
             return LeafNode("mo", math_node.text)
+        case MathType.FRACTION:
+            return ParentNode("mfrac", None)
         case _:
             raise TypeError("invalid TextType")
